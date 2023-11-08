@@ -1,0 +1,177 @@
+﻿@using web.Models
+
+<style>
+    /* Define a CSS class for the container */
+    .container {
+        display: flex;
+        justify-content: space-between;
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    /* Style the filter column */
+    .filter-column {
+        width: 30%;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    /* Style the filter section */
+    .filter {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    /* Style the table column */
+    .table-column {
+        width: 70%;
+    }
+
+    /* Style the table */
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #ccc;
+    }
+
+        /* Style table headers */
+        .custom-table th {
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* Style table rows */
+        .custom-table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        /* Style links within the table */
+        .custom-table a {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 10px;
+        }
+
+        
+        /* Define styles for hover effect on table rows */
+        .custom-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+</style>
+
+@model List<Order>
+@{
+    int modeP = ViewBag.modeP;
+    int modeD = ViewBag.modeD;
+    string totalPrice(Order order)
+    {
+        NorthwindContext _context = new NorthwindContext();
+        decimal totalAmount = _context.Orders
+            .Where(o => o.OrderId == order.OrderId)
+            .Select(o => o.OrderDetails.Sum(od => od.UnitPrice * od.Quantity))
+            .SingleOrDefault();
+        return totalAmount.ToString("0.00");
+    }
+}
+
+<div class="container">
+    <div class="filter-column">
+        <div class="filter">
+            <form action="/Order/List" method="POST">
+                <h3>Filter</h3>
+                <table class="filter-table">
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <form action="/Order/List" method="POST">
+                                    <h3>Filter</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Employee</td>
+                            <td>
+                                <select name="EmployeeId">
+                                    <option value="">Select Employee</option>
+                                    @foreach (var employee in ViewBag.Employees)
+                                    {
+                                        <option value="@employee.EmployeeId">@employee.FirstName @employee.LastName</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Customer</td>
+                            <td>
+                                <select name="CustomerId">
+                                    <option value="">Select Customer</option>
+                                    @foreach (var customer in ViewBag.Customers)
+                                    {
+                                        <option value="@customer.CustomerId">@customer.ContactName</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>From</td>
+                            <td>
+                                <input type="date" name="StartDate" placeholder="Start Date" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>To</td>
+                            <td>
+                                <input type="date" name="EndDate" placeholder="End Date" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <input type="submit" value="Filter" />
+                            </td>
+                        </tr>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+    <div class="table-column">
+        <div class="table-container">
+            <h3>List Order</h3>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>OrderID</th>
+                        <th>Employee</th>
+                        <th>Customer</th>
+                        <th>
+                            <a href="/Order/SortByTotalPrice?modeP=@modeP" id="sort-unitprice-desc" onclick="toggleModeP()">UnitPrice</a>
+                        </th>
+                        <th>
+                            <a href="/Order/SortByOrderDate?modeD=@modeD" id="sort-orderdate-asc" onclick="toggleModeD()">OrderDate</a>
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.Employee.FirstName @order.Employee.LastName</td>
+                            <td>@order.Customer.ContactName</td>
+                            <td>@totalPrice(order)</td>
+                            <td>@order.OrderDate</td>
+                            <td>
+                                <a href="/Order/Delete?id=@order.OrderId">Delete</a>|
+                                <a href="/Order/Detail?id=@order.OrderId">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

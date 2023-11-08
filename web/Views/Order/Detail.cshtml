@@ -1,0 +1,101 @@
+﻿@model web.Models.Order
+
+<h2>Chi tiết đơn hàng</h2>
+
+<table class="table">
+    <tr>
+        <th>Order ID</th>
+        <td>@Model.OrderId</td>
+    </tr>
+    <tr>
+        <th>Employee</th>
+        <td>@Model.Employee.FirstName @Model.Employee.LastName</td>
+    </tr>
+    <tr>
+        <th>Customer</th>
+        <td>@Model.Customer.ContactName</td>
+    </tr>
+    <tr>
+        <th>Order Date</th>
+        <td>@Model.OrderDate</td>
+    </tr>
+    <!-- Thêm các thông tin khác của đơn hàng -->
+</table>
+
+<h3>Chi tiết sản phẩm</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var orderDetail in Model.OrderDetails)
+        {
+            <tr>
+                <td>@orderDetail.Product.ProductName</td>
+                <td>@orderDetail.Quantity</td>
+                <td>@orderDetail.UnitPrice</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="/Order/List">List Order    </a>
+<style>
+    /* CSS cho trang chi tiết đơn hàng */
+
+    /* Định dạng cho phần tiêu đề h2 */
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    /* Định dạng cho bảng thông tin đơn hàng */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Định dạng cho tiêu đề bảng danh sách sản phẩm */
+        .table thead {
+            background-color: #f2f2f2;
+        }
+
+        /* Định dạng cho dòng chẵn của bảng danh sách sản phẩm */
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Định dạng cho dòng khi di chuột qua */
+        .table tbody tr:hover {
+            background-color: #ddd;
+        }
+
+    /* Định dạng cho nút quay lại */
+    a.asp-action {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+
+        a.asp-action:hover {
+            background-color: #0056b3;
+        }
+
+</style>
